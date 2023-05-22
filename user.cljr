@@ -1,0 +1,19 @@
+(ns user)
+
+(def home-path (System.Environment/GetEnvironmentVariable "HOME"))
+
+(defn print-all-assemblies
+  []
+  (doseq [assembly (seq (.GetAssemblies (System.AppDomain/CurrentDomain)))]
+    (println (.FullName assembly))))
+
+;; packages. They've all been added via `dotnet install` and then `dotnet restore` to download the packages.
+(def packages ["clr.tools.reader/1.3.7/lib/netstandard2.1/clojure.tools.reader.dll"
+               "clojure.tools.reader/1.3.7/lib/netstandard2.1/clojure.tools.reader.dll"
+               "clojure.tools.nrepl/0.1.0-alpha1/lib/netstandard2.1/clojure.tools.nrepl.dll"])
+
+(def assemblies (doall (map (fn [package]
+                              (assembly-load-from (str home-path "/.nuget/packages/" package))) packages)))
+
+(require 'clojure.tools.reader)
+(require '[clojure.tools.nrepl])
